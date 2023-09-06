@@ -12,14 +12,14 @@
         "type": "StaticResponseHandler"
       },
       "scanInterval": 1,
-      "routes": [  // Agregamos una regla específica para la ruta "/jony"
+      "routes": [  
         {
-          "condition": "${matches(request.uri.path, '^/jony$')}",  // Condición para la ruta "/jony"
+          "condition": "${matches(request.uri.path, '^/jony$')}",  
           "handler": {
             "type": "StaticResponseHandler",
             "config": {
               "status": 200,
-              "entity": "Hello from the /jony route!"  // Mensaje personalizado para la ruta "/jony"
+              "entity": "Hello from the /jony route!"  
             }
           }
         }
