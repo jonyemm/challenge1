@@ -1,57 +1,21 @@
 {
-  "handler": {
-    "name": "_router",
-    "type": "Router",
-    "config": {
-      "defaultHandler": null,
-      "scanInterval": 1,
-      "handler": [
-        {
-          "name": "jonyHandler",
-          "type": "StaticResponseHandler",
-          "config": {
-            "entity": "Mensaje personalizado para la ruta /jony",
-            "status": 200
-          },
-          "condition": "${matches(request.uri.path, '^/jony')}"
-        }
-      ]
-    }
-  },
   "heap": [
     {
-      "name": "JwtSession",
-      "type": "JwtSession"
-    },
-    {
-      "name": "MyCapture",
-      "type": "CaptureDecorator",
+      "name": "ConditionRouter",
+      "type": "RouterHandler",
       "config": {
-        "type": "Slf4jLogSink",
-        "captureEntity": true,
-        "captureExchange": true,
-        "logSink": {
-          "config": {
-            "base": "org.forgerock.openig"
+        "baseURI": "/",
+        "handler": [
+          {
+            "type": "StaticResponseHandler",
+            "config": {
+              "status": 200,
+              "entity": "¡Hola desde ForgeRock IG en la ruta /jony!"
+            },
+            "condition": "${matches(request.uri.path, '^/jony')}"
           }
-        }
-      }
-    },
-    {
-      "name": "CommonClientHandler",
-      "type": "ClientHandler",
-      "config": {
-        "_keyManager": null,
-        "_trustManager": null,
-        "connectionTimeout": "10 seconds",
-        "connections": 64,
-        "disableRetries": true,
-        "disableReuseConnection": true,
-        "hostnameVerifier": "ALLOW_ALL",
-        "numberOfWorkers": 4,
-        "soTimeout": "10 seconds"
+        ]
       }
     }
-  ],
-  "monitor": true
+  ]
 }
