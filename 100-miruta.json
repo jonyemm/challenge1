@@ -1,0 +1,14 @@
+{
+  "routes": [
+    {
+      "condition": "${matches(request.uri.path, '^/ruta-ejemplo$')}",
+      "handler": {
+        "type": "StaticResponse",
+        "config": {
+          "status": 200,
+          "entity": "Este es un mensaje de ejemplo desde Identity Gateway."
+        }
+      }
+    }
+  ]
+}
