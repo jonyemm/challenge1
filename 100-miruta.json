@@ -1,24 +1,64 @@
 {
   "handler": {
-    "name": "jonyHandler",
-    "type": "ConditionalHandler",
+    "name": "_router",
+    "type": "Router",
     "config": {
-      "condition": "${matches(request.uri.path, '^/jony')}",
-      "handler": {
-        "type": "StaticResponseHandler",
+      "defaultHandler": {
         "config": {
-          "status": 200,
-          "headers": {
-            "Cache-Control": ["none"],
-            "Content-Type": ["text/plain"],
-            "X-Content-Type-Options": ["nosniff"]
-          },
-          "entity": "Este es un mensaje personalizado para la ruta /jony"
+          "entity": "Message from ConfigJson.MyMainRouter.defaultHandler",
+          "reason": "found",
+          "status": 200
         },
-        "monitor": {
-          "enabled": true
+        "type": "StaticResponseHandler"
+      },
+      "scanInterval": 1,
+      "handler": [
+        {
+          "name": "jonyHandler",
+          "type": "StaticResponseHandler",
+          "config": {
+            "entity": "Mensaje personalizado para la ruta /jony",
+            "status": 200
+          }
+        }
+      ],
+      "condition": "${matches(request.uri.path, '^/jony')}"
+    }
+  },
+  "heap": [
+    {
+      "name": "JwtSession",
+      "type": "JwtSession"
+    },
+    {
+      "name": "MyCapture",
+      "type": "CaptureDecorator",
+      "config": {
+        "type": "Slf4jLogSink",
+        "captureEntity": true,
+        "captureExchange": true,
+        "logSink": {
+          "config": {
+            "base": "org.forgerock.openig"
+          }
         }
       }
+    },
+    {
+      "name": "CommonClientHandler",
+      "type": "ClientHandler",
+      "config": {
+        "_keyManager": null,
+        "_trustManager": null,
+        "connectionTimeout": "10 seconds",
+        "connections": 64,
+        "disableRetries": true,
+        "disableReuseConnection": true,
+        "hostnameVerifier": "ALLOW_ALL",
+        "numberOfWorkers": 4,
+        "soTimeout": "10 seconds"
+      }
     }
-  }
+  ],
+  "monitor": true
 }
