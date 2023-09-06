@@ -1,14 +1,24 @@
 {
-  "routes": [
-    {
-      "condition": "${matches(request.uri.path, '^/ruta-ejemplo$')}",
+  "handler": {
+    "name": "jonyHandler",
+    "type": "ConditionalHandler",
+    "config": {
+      "condition": "${matches(request.uri.path, '^/jony')}",
       "handler": {
-        "type": "StaticResponse",
+        "type": "StaticResponseHandler",
         "config": {
           "status": 200,
-          "entity": "Este es un mensaje de ejemplo desde Identity Gateway."
+          "headers": {
+            "Cache-Control": ["none"],
+            "Content-Type": ["text/plain"],
+            "X-Content-Type-Options": ["nosniff"]
+          },
+          "entity": "Este es un mensaje personalizado para la ruta /jony"
+        },
+        "monitor": {
+          "enabled": true
         }
       }
     }
-  ]
+  }
 }
