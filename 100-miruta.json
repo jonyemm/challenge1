@@ -3,14 +3,7 @@
     "name": "_router",
     "type": "Router",
     "config": {
-      "defaultHandler": {
-        "config": {
-          "entity": "Message from ConfigJson.MyMainRouter.defaultHandler",
-          "reason": "found",
-          "status": 200
-        },
-        "type": "StaticResponseHandler"
-      },
+      "defaultHandler": null,
       "scanInterval": 1,
       "handler": [
         {
@@ -19,10 +12,10 @@
           "config": {
             "entity": "Mensaje personalizado para la ruta /jony",
             "status": 200
-          }
+          },
+          "condition": "${matches(request.uri.path, '^/jony')}"
         }
-      ],
-      "condition": "${matches(request.uri.path, '^/jony')}"
+      ]
     }
   },
   "heap": [
