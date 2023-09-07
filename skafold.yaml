@@ -1,0 +1,6 @@
+apiVersion: skaffold/v2betaXX
+kind: Config
+build:
+  artifacts:
+    - image: docker.io/your-dockerhub-username/ig-image:tag
+      context: /path/to/your/IdentityGateway/project
