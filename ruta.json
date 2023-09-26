@@ -1,0 +1,13 @@
+{
+    "name": "my-route",
+    "baseURI": "http://example.com",
+    "handler": {
+        "type": "StaticResponseHandler",
+        "config": {
+            "status": 200,
+            "entity": "This is my route response."
+        }
+    },
+    "condition": "${matches(request.uri.path, '^/my-route')}",
+    "routeId": "my-route-id"
+}
