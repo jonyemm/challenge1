@@ -1,0 +1,21 @@
+<configuration>
+    <!-- ... Otras configuraciones ... -->
+
+    <!-- Definir un discriminador basado en la ruta -->
+    <discriminator>
+        <key>route</key>
+        <defaultValue>default</defaultValue>
+    </discriminator>
+
+    <appender name="ROUTE" class="ch.qos.logback.core.FileAppender">
+        <file>/var/log/ig/ig-route.log</file>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - [%X{route}] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <!-- Enruta los registros al archivo de registro específico -->
+        <appender-ref ref="ROUTE" />
+    </root>
+</configuration>
