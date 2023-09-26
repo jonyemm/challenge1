@@ -1,0 +1,36 @@
+<configuration>
+    <!-- Definición de un appender por ruta -->
+    <appender name="my-route-log" class="ch.qos.logback.core.FileAppender">
+        <file>/var/log/ig/my-route.log</file>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Definición de discriminador para enrutamiento -->
+    <discriminator>
+        <key>routeId</key>
+        <defaultValue>default</defaultValue>
+    </discriminator>
+
+    <!-- Configuración de los registros para enrutar por ruta -->
+    <appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <discriminator>
+            <key>routeId</key>
+            <defaultValue>default</defaultValue>
+        </discriminator>
+        <sift>
+            <appender name="ROUTE-${routeId}" class="ch.qos.logback.core.FileAppender">
+                <file>/var/log/ig/route-${routeId}.log</file>
+                <encoder>
+                    <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+                </encoder>
+            </appender>
+        </sift>
+    </appender>
+
+    <!-- Configuración de registro por defecto -->
+    <root level="INFO">
+        <appender-ref ref="SIFT"/>
+    </root>
+</configuration>
