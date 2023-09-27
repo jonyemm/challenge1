@@ -1,37 +1,23 @@
 {
   "handler": {
-    "type": "Chain",
+    "type": "StaticResponseHandler",
     "config": {
-      "filters": [],
-      "handler": {
-        "type": "StaticResponseHandler",
-        "config": {
-          "status": 200,
-          "headers": {
-            "Cache-Control": [
-              "none"
-            ],
-            "Content-Type": [
-              "text/plain"
-            ],
-            "X-Content-Type-Options": [
-              "nosniff"
-            ]
-          },
-          "entity": "Hello TEST and welcome to OpenIG. Your path is ${request.uri.path}. OpenIG is using the default handler for this route"
-        }
+      "status": 200,
+      "headers": {
+        "Cache-Control": ["none"],
+        "Content-Type": ["text/plain"],
+        "X-Content-Type-Options": ["nosniff"]
+      },
+      "entity": "Hello TEST and welcome to OpenIG. Your path is ${request.uri.path}. OpenIG is using the default handler for this route"
+    },
+    "monitor": {
+      "enabled": true,
+      "log": {
+        "appender": "SIFT",
+        "level": "INFO",
+        "message": "Route accessed with path: ${request.uri.path}"
       }
     }
   },
-  "monitor": {
-    "enabled": true
-  },
-  "condition": "${matches(request.uri.path, '^/jony')}",
- "log": {
-    "enabled": true,
-    "loggerName": "com.example.route.jony",
-    "loggerConfig": {
-      "type": "logback",
-      "configFile": "./logback.xml"  // Reemplaza con la ubicación correcta de tu logback.xml
-    }
+  "condition": "${matches(request.uri.path, '^/jony')}"
 }
