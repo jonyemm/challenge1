@@ -27,9 +27,11 @@
     "enabled": true
   },
   "condition": "${matches(request.uri.path, '^/jony')}",
-  "log": {
+ "log": {
     "enabled": true,
-    "level": "INFO",
-    "message": "Se ha accedido a la ruta: ${request.uri.path}"
-  }
+    "loggerName": "com.example.route.jony",
+    "loggerConfig": {
+      "type": "logback",
+      "configFile": "./logback.xml"  // Reemplaza con la ubicación correcta de tu logback.xml
+    }
 }
