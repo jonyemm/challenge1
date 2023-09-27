@@ -21,3 +21,4 @@
   },
   "condition": "${matches(request.uri.path, '^/jony')}"
 }
+.
