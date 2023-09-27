@@ -1,13 +1,35 @@
 {
-    "name": "my-route",
-    "baseURI": "http://example.com",
-    "handler": {
+  "handler": {
+    "type": "Chain",
+    "config": {
+      "filters": [],
+      "handler": {
         "type": "StaticResponseHandler",
         "config": {
-            "status": 200,
-            "entity": "This is my route response."
+          "status": 200,
+          "headers": {
+            "Cache-Control": [
+              "none"
+            ],
+            "Content-Type": [
+              "text/plain"
+            ],
+            "X-Content-Type-Options": [
+              "nosniff"
+            ]
+          },
+          "entity": "Hello TEST and welcome to OpenIG. Your path is ${request.uri.path}. OpenIG is using the default handler for this route"
         }
-    },
-    "condition": "${matches(request.uri.path, '^/my-route')}",
-    "routeId": "my-route-id"
+      }
+    }
+  },
+  "monitor": {
+    "enabled": true
+  },
+  "condition": "${matches(request.uri.path, '^/jony')}",
+  "log": {
+    "enabled": true,
+    "level": "INFO",
+    "message": "Se ha accedido a la ruta: ${request.uri.path}"
+  }
 }
