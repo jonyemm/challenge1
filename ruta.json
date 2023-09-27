@@ -1,24 +1,35 @@
+
 {
   "handler": {
     "type": "StaticResponseHandler",
     "config": {
       "status": 200,
       "headers": {
-        "Cache-Control": ["none"],
-        "Content-Type": ["text/plain"],
-        "X-Content-Type-Options": ["nosniff"]
+        "Cache-Control": [
+          "none"
+        ],
+        "Content-Type": [
+          "text/plain"
+        ],
+        "X-Content-Type-Options": [
+          "nosniff"
+        ]
       },
       "entity": "Hello TEST and welcome to OpenIG. Your path is ${request.uri.path}. OpenIG is using the default handler for this route"
     },
     "monitor": {
-      "enabled": true,
-      "log": {
-        "appender": "SIFT",
-        "level": "INFO",
-        "message": "Route accessed with path: ${request.uri.path}"
-      }
+      "enabled": true
     }
   },
-  "condition": "${matches(request.uri.path, '^/jony')}"
+  "condition": "${matches(request.uri.path, '^/jony')}",
+  "filters": [
+    {
+      "type": "LogFilter",
+      "config": {
+        "loggerName": "com.example.route.jony",
+        "level": "INFO",
+        "message": "Request matched condition: ${matches(request.uri.path, '^/jony')}"
+      }
+    }
+  ]
 }
-.
