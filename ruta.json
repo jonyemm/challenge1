@@ -1,35 +1,59 @@
-
 {
+  "name": "03-rs-tokenintrospect",
+  "monitor": false,
+  "baseURI": "http://192.168.0.110:8080",
+  "condition": "${matches(request.uri.path, '^/rs-tokenintrospect')}",
+  "capture": "all",
   "handler": {
-    "type": "StaticResponseHandler",
+    "type": "Chain",
     "config": {
-      "status": 200,
-      "headers": {
-        "Cache-Control": [
-          "none"
-        ],
-        "Content-Type": [
-          "text/plain"
-        ],
-        "X-Content-Type-Options": [
-          "nosniff"
-        ]
-      },
-      "entity": "Hello TEST and welcome to OpenIG. Your path is ${request.uri.path}. OpenIG is using the default handler for this route"
-    },
-    "monitor": {
-      "enabled": true
+      "filters": [
+        {
+          "name": "OAuth2ResourceServerFilter-1",
+          "type": "OAuth2ResourceServerFilter",
+          "config": {
+            "scopes": [
+              "mail",
+              "level20", 
+              "profile"
+            ],
+            "requireHttps": false,
+            "realm": "OpenIG",
+            "accessTokenResolver": {
+              "name": "token-resolver-1",
+              "type": "TokenIntrospectionAccessTokenResolver",
+              "config": {
+                "amService": "AmService-1",
+                "providerHandler": {
+                  "type": "Chain",
+                  "config": {
+                    "filters": [
+                      {
+                        "type": "HeaderFilter",
+                        "config": {
+                          "messageType": "request",
+                          "add": {
+                            "Authorization": [
+                              "Basic ${encodeBase64('885e8c9b-1260-4b68-9608-a82118254543:-uabELxwQ-MGX7YnvWokCymE_ZQacVcK5qKc9jGDtre3pnCbDYZ_nQ_YNbmFFvnTr1aOIhXNAJGtJWPgUr7RqA')}"
+                            ]
+                          }
+                        }
+                      }
+                    ],
+                    "handler": "ForgeRockClientHandler"
+                  }
+                },
+                "cache": {
+                  "enabled": true,
+                  "defaultTimeout": "1 hour",
+                  "maxTimeout": "1 day"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "handler": "ReverseProxyHandler"
     }
-  },
-  "condition": "${matches(request.uri.path, '^/jony')}",
-  "filters": [
-    {
-      "type": "LogFilter",
-      "config": {
-        "loggerName": "com.example.route.jony",
-        "level": "INFO",
-        "message": "Request matched condition: ${matches(request.uri.path, '^/jony')}"
-      }
-    }
-  ]
+  }
 }
