@@ -1,7 +1,8 @@
 {
-  "name": "test-token",
-  "baseURI": "http://app.example.com:8081",
-  "condition": "${find(request.uri.path, '^/test-token')}",
+  "name": "03-rs-tokenintrospect",
+  "monitor": false,
+  "condition": "${matches(request.uri.path, '^/rs-tokenintrospect')}",
+  "capture": "all",
   "handler": {
     "type": "Chain",
     "config": {
@@ -16,7 +17,7 @@
             "requireHttps": false,
             "realm": "OpenIG",
             "accessTokenResolver": {
-              "name": "TokenIntrospectionAccessTokenResolver-1",
+              "name": "token-resolver-1",
               "type": "TokenIntrospectionAccessTokenResolver",
               "config": {
                 "amService": "AmService-1",
@@ -25,15 +26,24 @@
                   "config": {
                     "filters": [
                       {
-                        "type": "HttpBasicAuthenticationClientFilter",
+                        "type": "HeaderFilter",
                         "config": {
-                          "username": "ig_agent",
-                          "password": "password"
+                          "messageType": "request",
+                          "add": {
+                            "Authorization": [
+                              "Basic ${encodeBase64('oauth2-client:password')}"
+                            ]
+                          }
                         }
                       }
                     ],
                     "handler": "ForgeRockClientHandler"
                   }
+                },
+                "cache": {
+                  "enabled": true,
+                  "defaultTimeout": "1 hour",
+                  "maxTimeout": "1 day"
                 }
               }
             }
@@ -44,10 +54,7 @@
         "type": "StaticResponseHandler",
         "config": {
           "status": 200,
-          "headers": {
-            "Content-Type": [ "text/html; charset=UTF-8" ]
-          },
-          "entity": "<html><body><h2>Decoded access_token: ${contexts.oauth2.accessToken.info}</h2></body></html>"
+          "entity": "<html><body><h2>Decoded access token with introspect endpoint: ${contexts.oauth2.accessToken.info}</h2></body></html>"
         }
       }
     }
