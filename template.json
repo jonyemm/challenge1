@@ -1,8 +1,7 @@
 {
-  "name": "03-rs-tokenintrospect",
-  "monitor": false,
-  "condition": "${matches(request.uri.path, '^/rs-tokenintrospect')}",
-  "capture": "all",
+  "name": "introspect-token",
+  "baseURI": "http://tu-sitio.com", 
+  "condition": "${matches(request.uri.path, '^/introspect-token')}",
   "handler": {
     "type": "Chain",
     "config": {
@@ -11,39 +10,29 @@
           "name": "OAuth2ResourceServerFilter-1",
           "type": "OAuth2ResourceServerFilter",
           "config": {
-            "scopes": [
-              "mail"
-            ],
-            "requireHttps": false,
+            "scopes": ["tu-alcance"], 
+            "requireHttps": true,      
             "realm": "OpenIG",
             "accessTokenResolver": {
-              "name": "token-resolver-1",
+              "name": "TokenIntrospectionAccessTokenResolver-1",
               "type": "TokenIntrospectionAccessTokenResolver",
               "config": {
+                "introspectionEndpoint": "http://servidor-authorization.com/introspect", 
                 "amService": "AmService-1",
                 "providerHandler": {
                   "type": "Chain",
                   "config": {
                     "filters": [
                       {
-                        "type": "HeaderFilter",
+                        "type": "HttpBasicAuthenticationClientFilter",
                         "config": {
-                          "messageType": "request",
-                          "add": {
-                            "Authorization": [
-                              "Basic ${encodeBase64('oauth2-client:password')}"
-                            ]
-                          }
+                          "username": "ig_agent",
+                          "password": "password"
                         }
                       }
                     ],
                     "handler": "ForgeRockClientHandler"
                   }
-                },
-                "cache": {
-                  "enabled": true,
-                  "defaultTimeout": "1 hour",
-                  "maxTimeout": "1 day"
                 }
               }
             }
@@ -54,7 +43,10 @@
         "type": "StaticResponseHandler",
         "config": {
           "status": 200,
-          "entity": "<html><body><h2>Decoded access token with introspect endpoint: ${contexts.oauth2.accessToken.info}</h2></body></html>"
+          "headers": {
+            "Content-Type": ["application/json"]
+          },
+          "entity": "{\"message\": \"Token introspeccionado con éxito\"}"
         }
       }
     }
