@@ -1,7 +1,7 @@
 {
-  "name": "introspect-token",
-  "baseURI": "http://tu-sitio.com", 
-  "condition": "${matches(request.uri.path, '^/introspect-token')}",
+  "name": "20-mb-contracts-2",
+  "baseURI": "https://qa-api.actinver.com.mx",
+  "condition": "${find(request.uri.path, '^/contracts/thirdParty/account/bank')}",
   "handler": {
     "type": "Chain",
     "config": {
@@ -10,24 +10,29 @@
           "name": "OAuth2ResourceServerFilter-1",
           "type": "OAuth2ResourceServerFilter",
           "config": {
-            "scopes": ["tu-alcance"], 
-            "requireHttps": true,      
+            "scopes": [
+              "level20"
+            ],
+            "requireHttps": false,
             "realm": "OpenIG",
             "accessTokenResolver": {
-              "name": "TokenIntrospectionAccessTokenResolver-1",
+              "name": "token-resolver-1",
               "type": "TokenIntrospectionAccessTokenResolver",
               "config": {
-                "introspectionEndpoint": "http://servidor-authorization.com/introspect", 
-                "amService": "AmService-1",
+                "endpoint": "https://openam-gfaid-usc1-dev.id.forgerock.io/am/oauth2/alpha/introspect",
                 "providerHandler": {
                   "type": "Chain",
                   "config": {
                     "filters": [
                       {
-                        "type": "HttpBasicAuthenticationClientFilter",
+                        "type": "HeaderFilter",
                         "config": {
-                          "username": "ig_agent",
-                          "password": "password"
+                          "messageType": "request",
+                          "add": {
+                            "Authorization": [
+                              "Basic ${encodeBase64('oauth2-client:password')}"
+                            ]
+                          }
                         }
                       }
                     ],
@@ -39,16 +44,10 @@
           }
         }
       ],
-      "handler": {
-        "type": "StaticResponseHandler",
-        "config": {
-          "status": 200,
-          "headers": {
-            "Content-Type": ["application/json"]
-          },
-          "entity": "{\"message\": \"Token introspeccionado con éxito\"}"
+      "handler" : {
+        "type" : "ReverseProxyHandler", 
+        "capture" : "all"
         }
-      }
     }
   }
 }
