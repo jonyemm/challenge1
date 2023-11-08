@@ -1,18 +1,40 @@
 {
-  "name": "20-mb-contracts-2",
-  "baseURI": "https://qa-api.actinver.com.mx",
-  "condition": "${find(request.uri.path, '^/contracts/thirdParty/account/bank')}",
+  "name": "combined-route",
+  "baseURI": "http://app.example.com:8081",
+  "condition": "${matches(request.uri.path, '^/home/sso-studio')}",
+  "heap": [
+    {
+      "name": "AmService-1",
+      "type": "AmService",
+      "config": {
+        "url": "http://openam.example.com:8088/openam",
+        "realm": "/",
+        "agent": {
+          "username": "ig_agent",
+          "password": "password"
+        },
+        "sessionCache": {
+          "enabled": false
+        }
+      }
+    }
+  ],
   "handler": {
     "type": "Chain",
     "config": {
       "filters": [
         {
+          "name": "SingleSignOnFilter-1",
+          "type": "SingleSignOnFilter",
+          "config": {
+            "amService": "AmService-1"
+          }
+        },
+        {
           "name": "OAuth2ResourceServerFilter-1",
           "type": "OAuth2ResourceServerFilter",
           "config": {
-            "scopes": [
-              "level20"
-            ],
+            "scopes": ["level20"],
             "requireHttps": false,
             "realm": "OpenIG",
             "accessTokenResolver": {
@@ -44,10 +66,7 @@
           }
         }
       ],
-      "handler" : {
-        "type" : "ReverseProxyHandler", 
-        "capture" : "all"
-        }
+      "handler": "ReverseProxyHandler"
     }
   }
 }
