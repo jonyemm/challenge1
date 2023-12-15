@@ -1,65 +1,57 @@
 {
+  "name": "20-api-template",
+  "monitor": false,
+  "baseURI":"http://testApp:8081",
+  "condition": "${matches(request.uri.path, '^/home')}",
+  "capture": "all",
   "handler": {
-    "name": "_router",
-    "type": "Router",
+    "type": "Chain",
     "config": {
-      "defaultHandler": {
-        "config": {
-          "entity": "Message from ConfigJson.MyMainRouter.defaultHandler",
-          "reason": "found",
-          "status": 200
-        },
-        "type": "StaticResponseHandler"
-      },
-      "scanInterval": 1,
-      "routes": [  
+      "filters": [
         {
-          "condition": "${matches(request.uri.path, '^/jony$')}",  
-          "handler": {
-            "type": "StaticResponseHandler",
-            "config": {
-              "status": 200,
-              "entity": "Hello from the /jony route!"  
+          "name": "OAuth2ResourceServerFilter-1",
+          "type": "OAuth2ResourceServerFilter",
+          "config": {
+            "scopes": [
+              "level20",
+	      "profile"
+            ],
+            "requireHttps": false,
+            "realm": "OpenIG",
+            "accessTokenResolver": {
+              "name": "token-resolver-1",
+              "type": "TokenIntrospectionAccessTokenResolver",
+              "config": {
+                "amService": "AmService-1",
+                "providerHandler": {
+                  "type": "Chain",
+                  "config": {
+                    "filters": [
+                      {
+                        "type": "HeaderFilter",
+                        "config": {
+                          "messageType": "request",
+                          "add": {
+                            "Authorization": [
+                              "Basic ${encodeBase64('fdgdsgdfg:6fdgsfdgTg')}"
+                            ]
+                          }
+                        }
+                      }
+                    ],
+                    "handler": "ForgeRockClientHandler"
+                  }
+                },
+                "cache": {
+                  "enabled": true,
+                  "defaultTimeout": "1 hour",
+                  "maxTimeout": "1 day"
+                }
+              }
             }
           }
-        }
-      ]
+        }],
+      "handler": "ReverseProxyHandler"
     }
-  },
-  "heap": [
-    {
-      "name": "JwtSession",
-      "type": "JwtSession"
-    },
-    {
-      "name": "MyCapture",
-      "type": "CaptureDecorator",
-      "config": {
-        "type": "Slf4jLogSink",
-        "captureEntity": true,
-        "captureExchange": true,
-        "logSink": {
-          "config": {
-            "base": "org.forgerock.openig"
-          }
-        }
-      }
-    },
-    {
-      "name": "CommonClientHandler",
-      "type": "ClientHandler",
-      "config": {
-        "_keyManager": null,
-        "_trustManager": null,
-        "connectionTimeout": "10 seconds",
-        "connections": 64,
-        "disableRetries": true,
-        "disableReuseConnection": true,
-        "hostnameVerifier": "ALLOW_ALL",
-        "numberOfWorkers": 4,
-        "soTimeout": "10 seconds"
-      }
-    }
-  ],
-  "monitor": true
+  }
 }
